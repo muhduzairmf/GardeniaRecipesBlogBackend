@@ -8,11 +8,11 @@ namespace GardeniaRecipesBlogBackend.Models
 
         [Required]
         [MaxLength(255)]
-        public string Title { get; set; }
+        public string Title { get; set; } = string.Empty;
 
         [Required]
         [MaxLength(255)]
-        public string Description { get; set; }
+        public string Description { get; set; } = string.Empty;
 
         [Required]
         public bool IsVerified { get; set; }
@@ -20,8 +20,14 @@ namespace GardeniaRecipesBlogBackend.Models
         [Required]
         public double EstimatedBudget { get; set; }
 
+        public UserModel User { get; set; }
+
         public int UserId { get; set; }
 
+        public CategoryModel Category { get; set; }
+
         public int CategoryId { get; set; }
+
+        public ImageModel Images { get; set; }  
     }
 }

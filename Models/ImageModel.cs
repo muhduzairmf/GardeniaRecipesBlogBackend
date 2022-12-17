@@ -8,7 +8,9 @@ namespace GardeniaRecipesBlogBackend.Models
 
         [Required]
         [MaxLength(255)]
-        public string Path { get; set; }
+        public string Path { get; set; } = string.Empty;
+
+        public RecipeModel Recipe { get; set; } 
 
         public int RecipeId { get; set; }
     }
