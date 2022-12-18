@@ -1,5 +1,6 @@
 ﻿using GardeniaRecipesBlogBackend.Data;
 using GardeniaRecipesBlogBackend.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,7 +11,7 @@ using System.Text.RegularExpressions;
 
 namespace GardeniaRecipesBlogBackend.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/user")]
     [ApiController]
     public class UserController : ControllerBase
     {
@@ -21,14 +22,14 @@ namespace GardeniaRecipesBlogBackend.Controllers
             _context = context;
         }
 
-        [HttpGet]
+        [HttpGet, Authorize]
         [ProducesResponseType(200)]
         public async Task<ActionResult<List<UserModel>>> RetrieveUsers()
         {
             return Ok(await _context.Users.ToListAsync());
         }
 
-        [HttpGet("{id:int}", Name = "RetrieveUser")]
+        [HttpGet("{id:int}", Name = "RetrieveUser"), Authorize]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
@@ -44,7 +45,7 @@ namespace GardeniaRecipesBlogBackend.Controllers
             return Ok(user);
         }
 
-        [HttpPatch("{id:int}", Name = "UpdateUser")]
+        [HttpPatch("{id:int}", Name = "UpdateUser"), Authorize]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         public async Task<ActionResult<UserModel>> UpdateUser(int id, UserModel updatedUser)
@@ -80,7 +81,7 @@ namespace GardeniaRecipesBlogBackend.Controllers
             return Ok(user);
         }
 
-        [HttpDelete("{id:int}", Name = "RemoveUser")]
+        [HttpDelete("{id:int}", Name = "RemoveUser"), Authorize]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         public async Task<IActionResult> RemoveUser(int id)

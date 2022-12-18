@@ -1,5 +1,6 @@
 ﻿using GardeniaRecipesBlogBackend.Data;
 using GardeniaRecipesBlogBackend.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -40,7 +41,7 @@ namespace GardeniaRecipesBlogBackend.Controllers
             return Ok(image);
         }
 
-        [HttpPost]
+        [HttpPost, Authorize]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         public async Task<ActionResult<ImageModel>> CreateImage(ImageModel newImage)
@@ -56,7 +57,7 @@ namespace GardeniaRecipesBlogBackend.Controllers
             return Ok(newImage);
         }
 
-        [HttpPatch("{id:int}", Name = "UpdateImage")]
+        [HttpPatch("{id:int}", Name = "UpdateImage"), Authorize]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         public async Task<ActionResult<ImageModel>> UpdateImage(int id, ImageModel updatedImage)
@@ -81,7 +82,7 @@ namespace GardeniaRecipesBlogBackend.Controllers
             return Ok(image);
         }
 
-        [HttpDelete("{id:int}", Name = "RemoveImage")]
+        [HttpDelete("{id:int}", Name = "RemoveImage"), Authorize]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         public async Task<IActionResult> RemoveImage(int id)

@@ -1,5 +1,6 @@
 ﻿using GardeniaRecipesBlogBackend.Data;
 using GardeniaRecipesBlogBackend.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -40,7 +41,7 @@ namespace GardeniaRecipesBlogBackend.Controllers
             return Ok(recipe);
         }
 
-        [HttpPost]
+        [HttpPost, Authorize]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         public async Task<ActionResult<RecipeModel>> CreateRecipe(RecipeModel newRecipe)
@@ -58,12 +59,12 @@ namespace GardeniaRecipesBlogBackend.Controllers
             return Ok(newRecipe);
         }
 
-        [HttpPatch("{id:int}", Name = "UpdateRecipe")]
+        [HttpPatch("{id:int}", Name = "UpdateRecipe"), Authorize]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         public async Task<ActionResult<RecipeModel>> UpdateRecipe(int id, RecipeModel updatedRecipe)
         {
-            if (updatedRecipe.Title == null || updatedRecipe.Description == null || updatedRecipe.IsVerified == null || updatedRecipe.EstimatedBudget == null || updatedRecipe.UserId == null || updatedRecipe.CategoryId == null)
+            if (updatedRecipe.Title == null || updatedRecipe.Description == null || updatedRecipe.EstimatedBudget == 0 || updatedRecipe.UserId == 0 || updatedRecipe.CategoryId == 0)
             {
                 return BadRequest();
             }
@@ -76,10 +77,13 @@ namespace GardeniaRecipesBlogBackend.Controllers
                 return NotFound();
             }
 
+            var user = await _context.Users.FindAsync(updatedRecipe.UserId);
+
             recipe.Title = updatedRecipe.Title;
             recipe.Description = updatedRecipe.Description;
-            recipe.IsVerified = updatedRecipe.IsVerified;
+            recipe.IsVerified = false;
             recipe.EstimatedBudget = updatedRecipe.EstimatedBudget;
+            recipe.Contributor = user.FullName;
             recipe.UserId = updatedRecipe.UserId;
             recipe.CategoryId = updatedRecipe.CategoryId;
 
@@ -88,7 +92,7 @@ namespace GardeniaRecipesBlogBackend.Controllers
             return Ok(recipe);
         }
 
-        [HttpDelete("{id:int}", Name = "RemoveRecipe")]
+        [HttpDelete("{id:int}", Name = "RemoveRecipe"), Authorize]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         public async Task<IActionResult> RemoveRecipe(int id)

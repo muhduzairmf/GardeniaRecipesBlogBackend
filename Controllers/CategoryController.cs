@@ -1,5 +1,6 @@
 ﻿using GardeniaRecipesBlogBackend.Data;
 using GardeniaRecipesBlogBackend.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -40,7 +41,7 @@ namespace GardeniaRecipesBlogBackend.Controllers
             return Ok(category);
         }
 
-        [HttpPost]
+        [HttpPost, Authorize]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         public async Task<ActionResult<CategoryModel>> CreateUser(CategoryModel newCategory)
@@ -58,7 +59,7 @@ namespace GardeniaRecipesBlogBackend.Controllers
             return Ok(newCategory);
         }
 
-        [HttpPatch("{id:int}", Name = "UpdateCategory")]
+        [HttpPatch("{id:int}", Name = "UpdateCategory"), Authorize]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         public async Task<ActionResult<CategoryModel>> UpdateCategory(int id, CategoryModel updatedCategory)
@@ -83,7 +84,7 @@ namespace GardeniaRecipesBlogBackend.Controllers
             return Ok(category);
         }
 
-        [HttpDelete("{id:int}", Name = "RemoveCategory")]
+        [HttpDelete("{id:int}", Name = "RemoveCategory"), Authorize]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         public async Task<IActionResult> RemoveCategory(int id)
