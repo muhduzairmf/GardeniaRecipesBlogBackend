@@ -4,8 +4,10 @@
     {
         public int Id { get; set; }
 
-        public int rateNumber { get; set; }
+        public int RateNumber { get; set; }
 
         public RecipeModel Recipes { get; set; }
+
+        public int RecipeId { get; set; }
     }
 }

@@ -46,7 +46,7 @@ namespace GardeniaRecipesBlogBackend.Controllers
         [ProducesResponseType(400)]
         public async Task<ActionResult<RatingModel>> CreateRecipe(RatingModel newRating)
         {
-            if (newRating == null || newRating.rateNumber <= 0 || newRating.rateNumber >= 6)
+            if (newRating == null || newRating.RateNumber <= 0 || newRating.RateNumber >= 6 || newRating.RecipeId == 0)
             {
                 return BadRequest();
             }
@@ -64,7 +64,7 @@ namespace GardeniaRecipesBlogBackend.Controllers
         [ProducesResponseType(404)]
         public async Task<ActionResult<RatingModel>> UpdateRating(int id, RatingModel updatedRating)
         {
-            if (updatedRating.rateNumber <= 0 || updatedRating.rateNumber >= 6)
+            if (updatedRating.RateNumber <= 0 || updatedRating.RateNumber >= 6)
             {
                 return BadRequest();
             }
@@ -77,7 +77,13 @@ namespace GardeniaRecipesBlogBackend.Controllers
                 return NotFound();
             }
 
-            rating.rateNumber = updatedRating.rateNumber;
+            var recipe = await _context.Recipes.FindAsync(rating.RecipeId);
+            if (recipe == null)
+            {
+                return NotFound();
+            }
+
+            rating.RateNumber = updatedRating.RateNumber;
 
             await _context.SaveChangesAsync();
 
@@ -95,7 +101,7 @@ namespace GardeniaRecipesBlogBackend.Controllers
                 return NotFound();
             }
 
-            _context.Recipes.Remove(rating);
+            _context.Rating.Remove(rating);
             await _context.SaveChangesAsync();
 
             return Ok();

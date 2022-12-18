@@ -33,7 +33,5 @@ namespace GardeniaRecipesBlogBackend.Models
         public ImageModel Images { get; set; }  
 
         public RatingModel Rating { get; set; }
-
-        public int RatingId { get; set; }
     }
 }
