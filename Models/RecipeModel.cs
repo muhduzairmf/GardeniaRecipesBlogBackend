@@ -20,6 +20,8 @@ namespace GardeniaRecipesBlogBackend.Models
         [Required]
         public double EstimatedBudget { get; set; }
 
+        public string Contributor { get; set; } = string.Empty;
+
         public UserModel User { get; set; }
 
         public int UserId { get; set; }
