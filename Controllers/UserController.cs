@@ -3,6 +3,10 @@ using GardeniaRecipesBlogBackend.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
+using System.Security.Cryptography;
+using System.Text;
+using System.Text.RegularExpressions;
 
 namespace GardeniaRecipesBlogBackend.Controllers
 {
@@ -38,32 +42,6 @@ namespace GardeniaRecipesBlogBackend.Controllers
             }
 
             return Ok(user);
-        }
-
-        [HttpPost]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(400)]
-        public async Task<ActionResult<UserModel>> CreateUser(UserModel newUser)
-        {
-            if (newUser == null || newUser.FullName == null || newUser.Email == null || newUser.Username == null || newUser.Password == null || newUser.Role == null) 
-            {
-                return BadRequest();
-            }
-
-            // Validate fullname
-
-            // Validate email
-
-            // Validate username
-
-            // Validate password
-
-            // Hash and salt the password
-
-            _context.Users.Add(newUser);
-            await _context.SaveChangesAsync();
-
-            return Ok(newUser);
         }
 
         [HttpPatch("{id:int}", Name = "UpdateUser")]
