@@ -14,5 +14,7 @@ namespace GardeniaRecipesBlogBackend.Data
         public DbSet<RecipeModel> Recipes { get; set; }
 
         public DbSet<UserModel> Users { get; set; }
+
+        public DbSet<RatingModel> Rating { get; set; }
     }
 }
