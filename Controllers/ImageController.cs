@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GardeniaRecipesBlogBackend.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/image")]
     [ApiController]
     public class ImageController : ControllerBase
     {
