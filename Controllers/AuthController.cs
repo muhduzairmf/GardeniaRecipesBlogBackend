@@ -8,6 +8,7 @@ using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace GardeniaRecipesBlogBackend.Controllers
@@ -39,7 +40,7 @@ namespace GardeniaRecipesBlogBackend.Controllers
                 return BadRequest();
             }
 
-            var user = await _context.Users.FindAsync(newSignup.FullName);
+            var user = _context.Users.Where(u => u.FullName == newSignup.FullName).FirstOrDefault();
             if (user != null)
             {
                 return BadRequest();
@@ -57,7 +58,7 @@ namespace GardeniaRecipesBlogBackend.Controllers
                 return BadRequest();
             }
 
-            user = await _context.Users.FindAsync(newSignup.Username);
+            user = _context.Users.Where(u => u.Username == newSignup.Username).FirstOrDefault();
             if (user != null)
             {
                 return BadRequest();
@@ -84,22 +85,20 @@ namespace GardeniaRecipesBlogBackend.Controllers
             }
 
             // create salt
-            byte[] saltByte = new HMACSHA256().Key;
-
             // convert salt into string
-            string salt = new System.Text.UTF8Encoding().GetString(saltByte);
+            string salt = Convert.ToHexString(new HMACSHA256().Key).Replace("-", "");
 
             // combine salt with password
             string combinedString = salt + newSignup.Password;
 
             // convert that combination to byte
-            byte[] combinedByte = new System.Text.UTF8Encoding().GetBytes(combinedString);
+            byte[] combinedByte = Encoding.UTF8.GetBytes(combinedString);
 
-            // convert that into byte, then hash it
-            byte[] hashedPassword = new HMACSHA256().ComputeHash(combinedByte);
+            // hash that combination, then convert to string
+            string hashedPassword = Convert.ToHexString(SHA256.HashData(combinedByte)).Replace("-", "");
 
             // then append salt with ":" and hashed (that converted into string)
-            newSignup.Password = salt + ":" + new System.Text.UTF8Encoding().GetString(hashedPassword);
+            newSignup.Password = salt + ":" + hashedPassword;
 
             UserModel newUser = new UserModel();
 
@@ -120,13 +119,13 @@ namespace GardeniaRecipesBlogBackend.Controllers
                 new Claim(ClaimTypes.Role, newSignup.Role),
             };
 
-            var key = new SymmetricSecurityKey(new System.Text.UTF8Encoding().GetBytes("JWTKey"));
+            var key = new SymmetricSecurityKey(new System.Text.UTF8Encoding().GetBytes("Jx2VHbBSTbkPkrdOClH4rcYOdIqKdKpbyBDI45ELIwk7061c968eadfba2959d6e12d156590bafc"));
 
             var credential = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature);
 
             var token = new JwtSecurityToken(
                 claims: claims,
-                expires: DateTime.Now.AddDays(7),
+                expires: DateTime.Now.AddDays(30),
                 signingCredentials: credential
             );
 
@@ -147,10 +146,10 @@ namespace GardeniaRecipesBlogBackend.Controllers
                 return BadRequest();
             }
 
-            var user = await _context.Users.FindAsync(loginInfo.Username);
+            var user = _context.Users.Where(u => u.Username == loginInfo.Username).FirstOrDefault();
             if (user == null)
             {
-                return NotFound();
+                return NotFound("No user found");
             }
 
             string salt = user.Password.Split(":")[0];
@@ -158,10 +157,10 @@ namespace GardeniaRecipesBlogBackend.Controllers
 
             string combinedString = salt + loginInfo.Password;
 
-            byte[] combinedByte = new System.Text.UTF8Encoding().GetBytes(combinedString);
-            byte[] hashedPassword = new HMACSHA256().ComputeHash(combinedByte);
+            byte[] combinedByte = Encoding.UTF8.GetBytes(combinedString);
+            string hashedPassword = Convert.ToHexString(SHA256.HashData(combinedByte)).Replace("-", "");
 
-            if (!hashedPassword.SequenceEqual(new System.Text.UTF8Encoding().GetBytes(hashedString)))
+            if (hashedPassword != hashedString)
             {
                 return BadRequest();
             }
@@ -173,18 +172,19 @@ namespace GardeniaRecipesBlogBackend.Controllers
                 new Claim(ClaimTypes.Role, user.Role),
             };
 
-            var key = new SymmetricSecurityKey(new System.Text.UTF8Encoding().GetBytes("JWTKey"));
+            var key = new SymmetricSecurityKey(new System.Text.UTF8Encoding().GetBytes("Jx2VHbBSTbkPkrdOClH4rcYOdIqKdKpbyBDI45ELIwk7061c968eadfba2959d6e12d156590bafc"));
 
             var credential = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature);
 
             var token = new JwtSecurityToken(
                 claims: claims,
-                expires: DateTime.Now.AddDays(7),
+                expires: DateTime.Now.AddDays(30),
                 signingCredentials: credential
             );
 
             var jwt = new JwtSecurityTokenHandler().WriteToken(token);
 
+            loginInfo.Password = user.Password;
             loginInfo.Token = jwt;
 
             return Ok(loginInfo);
