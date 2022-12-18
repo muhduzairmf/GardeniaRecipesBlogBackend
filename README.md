@@ -9,7 +9,7 @@ This Gardenia Recipes Blog is a recipe blog for Gardenia's customer that interes
 ### Testing this Backend     
 
 To test this Backend, please make sure to     
-- Download [Microsoft SQL Server]() and [Microsoft SQL Server Management Studio]()
+- Download [Microsoft SQL Server Express](https://www.microsoft.com/en-us/sql-server/sql-server-downloads/) and [Microsoft SQL Server Management Studio](https://learn.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms)
 - Download Microsoft.EntityFrameworkCore, Microsoft.EntityFrameworkCore.Design, Microsoft.EntityFrameworkCore.SqlServer and Microsoft.AspNetCore.Authentication.JwtBearer in NuGet Package Manager. To get it, right click on the project folder and click Manage NuGet Packages. Go to Browse tab and find these four packages.
 - Write these two command on Package Manager Console to do migrations and updates on database. To get it, click on View (top left) then click on Other Windows and click Package Manager Console. These two console are
 ```
