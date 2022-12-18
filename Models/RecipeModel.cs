@@ -30,8 +30,8 @@ namespace GardeniaRecipesBlogBackend.Models
 
         public int CategoryId { get; set; }
 
-        public ImageModel Images { get; set; }  
+        public List<ImageModel> Images { get; set; }  
 
-        public RatingModel Rating { get; set; }
+        public List<RatingModel> Ratings { get; set; }
     }
 }
