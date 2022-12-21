@@ -26,6 +26,6 @@ namespace GardeniaRecipesBlogBackend.Models
         [MaxLength(255)]
         public string Role { get; set; } = string.Empty;
 
-        public List<RecipeModel> Recipes { get; set; } = new List<RecipeModel>();
+        public List<RecipeModel> Recipes { get; set; }
     }
 }
