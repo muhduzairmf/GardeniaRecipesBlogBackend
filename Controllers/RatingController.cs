@@ -42,6 +42,40 @@ namespace GardeniaRecipesBlogBackend.Controllers
             return Ok(new RatingDTO { average = averageRate, count = countRate });
         }
 
+        // GET 		api/ratings/userId/${userId}/recipe/info
+        [HttpGet("userId/{userId}/recipe/info", Name = "GetRateInfoFromUserId")]
+        [ProducesResponseType(200)]
+        public ActionResult<List<RatingModel>> GetRateInfoFromUserId(int userId)
+        {
+            var recipes = _context.Recipes.Where(s => s.UserId == userId).ToList();
+
+            if (recipes.Count == 0)
+            {
+                return Ok(new RatingDTO { average = 0, count = 0 });
+            }
+
+            double countRate = 0;
+            double allRate = 0;
+            foreach (RecipeModel theRecipe in recipes)
+            {
+                var rating = _context.Rating.Where(s => s.RecipeId == theRecipe.Id).ToList();
+
+                if (rating.Count == 0)
+                {
+                    continue;
+                }
+
+                foreach (RatingModel theRating in rating)
+                {
+                    countRate += 1;
+                    allRate += theRating.star;
+                }
+            }
+            double averageRate = allRate / countRate;
+
+            return Ok(new RatingDTO { average = allRate/countRate, count = Convert.ToInt32(countRate) });
+        }
+
         // POST     api/ratings
         [HttpPost]
         [ProducesResponseType(200)]
