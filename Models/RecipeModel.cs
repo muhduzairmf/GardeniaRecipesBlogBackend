@@ -1,37 +1,51 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GardeniaRecipesBlogBackend.Models
 {
     public class RecipeModel
     {
-        public int Id { get; set; }
+        public int Id { get; set; } = 0;
 
         [Required]
         [MaxLength(255)]
-        public string Title { get; set; } = string.Empty;
+        public string RecipeName { get; set; } = string.Empty;
 
         [Required]
         [MaxLength(255)]
+        public string GardeniaProduct { get; set; } = string.Empty;
+
+        [Required]
+        [Column(TypeName = "Text")]
         public string Description { get; set; } = string.Empty;
 
         [Required]
-        public bool IsVerified { get; set; }
+        [Column(TypeName = "Text")]
+        public string Ingredients { get; set; } = string.Empty;
 
         [Required]
-        public double EstimatedBudget { get; set; }
+        [Column(TypeName = "Text")]
+        public string CookInstruct { get; set; } = string.Empty;
 
-        public string Contributor { get; set; } = string.Empty;
+        [Required]
+        [MaxLength(255)]
+        public string RecipeImg { get; set; } = string.Empty;
 
-        public UserModel User { get; set; }
+        [Required]
+        [MaxLength(255)]
+        public string Category { get; set; } = string.Empty;
 
-        public int UserId { get; set; }
+        [Required]
+        [MaxLength(255)]
+        public string CreatedDate { get; set; } = string.Empty;
 
-        public CategoryModel Category { get; set; }
+        [Required]
+        public bool IsVerified { get; set; } = false;
 
-        public int CategoryId { get; set; }
+        [Required]
+        public double EstimatedBudget { get; set; } = 0;
 
-        public List<ImageModel> Images { get; set; }  
-
-        public List<RatingModel> Ratings { get; set; }
+        public int UserId { get; set; } = 0;
     }
 }

@@ -11,7 +11,7 @@ using System.Text.RegularExpressions;
 
 namespace GardeniaRecipesBlogBackend.Controllers
 {
-    [Route("api/user")]
+    [Route("api/users")]
     [ApiController]
     public class UserController : ControllerBase
     {
@@ -22,80 +22,153 @@ namespace GardeniaRecipesBlogBackend.Controllers
             _context = context;
         }
 
-        [HttpGet, Authorize]
+        // GET      api/users/username/${username}
+        [HttpGet("username/{username}", Name = "GetUser")]
         [ProducesResponseType(200)]
-        public async Task<ActionResult<List<UserModel>>> RetrieveUsers()
+        public ActionResult<List<RatingModel>> GetUser(string username)
         {
-            return Ok(await _context.Users.ToListAsync());
-        }
-
-        [HttpGet("{id:int}", Name = "RetrieveUser"), Authorize]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(404)]
-        public async Task<ActionResult<UserModel>> RetrieveUser(int id)
-        {
-            var user = await _context.Users.FindAsync(id);
-
-            if (user == null)
-            {
-                return NotFound();
-            }
+            var user = _context.Users.Where(s => s.Username == username).ToList();
 
             return Ok(user);
         }
 
-        [HttpPatch("{id:int}", Name = "UpdateUser"), Authorize]
+        // POST     api/users
+        [HttpPost]
         [ProducesResponseType(200)]
-        [ProducesResponseType(404)]
-        public async Task<ActionResult<UserModel>> UpdateUser(int id, UserModel updatedUser)
+        public async Task<ActionResult<UserModel>> CreateUser(UserModel newUser)
         {
-            if (updatedUser.FullName == null || updatedUser.Email == null || updatedUser.Username == null || updatedUser.Password == null)
-            {
-                return BadRequest();
-            }
+            _context.Users.Add(newUser);
+            await _context.SaveChangesAsync();
 
-            // Validate fullname
+            return Ok(newUser);
+        }
 
-            // Validate email
+        // PATCH    api/users/id/${id}
+        [HttpPatch("id/{id}", Name = "UpdateUser")]
+        [ProducesResponseType(200)]
+        public async Task<ActionResult<UserModel>> UpdateUser(int id, UserModel newUser)
+        {
+            var user = _context.Users.Where(s => s.Id == id).ToList();
 
-            // Validate username
-
-            // Validate password
-
-            // Hash and salt the password
-
-            var user = await _context.Users.FindAsync(id);
-            if (user == null) 
-            { 
-                return NotFound();
-            }
-
-            user.FullName = updatedUser.FullName;
-            user.Email = updatedUser.Email;
-            user.Username = updatedUser.Username;
-            user.Password = updatedUser.Password;
+            user[0].FullName = newUser.FullName;
+            user[0].Username = newUser.Username;
+            user[0].Email = newUser.Email;
+            user[0].Password = newUser.Password;
 
             await _context.SaveChangesAsync();
 
-            return Ok(user);
+            return Ok(user[0]);
         }
 
-        [HttpDelete("{id:int}", Name = "RemoveUser"), Authorize]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(404)]
-        public async Task<IActionResult> RemoveUser(int id)
-        {
-            var user = await _context.Users.FindAsync(id);
-            if (user == null)
-            {
-                return NotFound();
-            }
 
-            _context.Users.Remove(user);
-            await _context.SaveChangesAsync();
+        //    [HttpGet, Authorize]
+        //    [ProducesResponseType(200)]
+        //    public async Task<ActionResult<List<UserModel>>> RetrieveUsers()
+        //    {
+        //        return Ok(await _context.Users.ToListAsync());
+        //    }
 
-            return Ok();
-        }
+        //    [HttpGet("{id:int}", Name = "RetrieveUser"), Authorize]
+        //    [ProducesResponseType(200)]
+        //    [ProducesResponseType(400)]
+        //    [ProducesResponseType(404)]
+        //    public async Task<ActionResult<UserModel>> RetrieveUser(int id)
+        //    {
+        //        var user = await _context.Users.FindAsync(id);
+
+        //        if (user == null)
+        //        {
+        //            return NotFound();
+        //        }
+
+        //        return Ok(user);
+        //    }
+
+        //    [HttpPatch("{id:int}", Name = "UpdateUser"), Authorize]
+        //    [ProducesResponseType(200)]
+        //    [ProducesResponseType(404)]
+        //    public async Task<ActionResult<UserModel>> UpdateUser(int id, UserDTO updatedUser)
+        //    {
+        //        if (updatedUser.FullName == null || updatedUser.Email == null || updatedUser.Username == null)
+        //        {
+        //            return BadRequest();
+        //        }
+
+        //        var user = await _context.Users.FindAsync(id);
+        //        if (user == null) 
+        //        { 
+        //            return NotFound();
+        //        }
+
+        //        user.FullName = updatedUser.FullName;
+        //        user.Email = updatedUser.Email;
+        //        user.Username = updatedUser.Username;
+
+        //        await _context.SaveChangesAsync();
+
+        //        return Ok(user);
+        //    }
+
+        //    [HttpPatch("password/{id:int}", Name = "UpdateUserPassword"), Authorize]
+        //    [ProducesResponseType(200)]
+        //    [ProducesResponseType(404)]
+        //    public async Task<ActionResult<UserModel>> UpdateUserPassword(int id, string currentPassword, string newPassword)
+        //    {
+        //        var user = await _context.Users.FindAsync(id);
+        //        if (user == null)
+        //        {
+        //            return NotFound();
+        //        }
+
+        //        string salt = user.Password.Split(":")[0];
+        //        string hashedString = user.Password.Split(":")[1];
+
+        //        string combinedString = salt + currentPassword;
+
+        //        byte[] combinedByte = Encoding.UTF8.GetBytes(combinedString);
+        //        string hashedPassword = Convert.ToHexString(SHA256.HashData(combinedByte)).Replace("-", "");
+
+        //        if (hashedPassword != hashedString)
+        //        {
+        //            return BadRequest();
+        //        }
+
+        //        // create salt
+        //        // convert salt into string
+        //        string newSalt = Convert.ToHexString(new HMACSHA256().Key).Replace("-", "");
+
+        //        // combine salt with password
+        //        string newCombinedString = salt + newPassword;
+
+        //        // convert that combination to byte
+        //        byte[] newCombinedByte = Encoding.UTF8.GetBytes(newCombinedString);
+
+        //        // hash that combination, then convert to string
+        //        string newHashedPassword = Convert.ToHexString(SHA256.HashData(newCombinedByte)).Replace("-", "");
+
+        //        // then append salt with ":" and hashed (that converted into string)
+        //        user.Password = newSalt + ":" + newHashedPassword;
+
+        //        await _context.SaveChangesAsync();
+
+        //        return Ok(user);
+        //    }
+
+        //    [HttpDelete("{id:int}", Name = "RemoveUser"), Authorize]
+        //    [ProducesResponseType(200)]
+        //    [ProducesResponseType(404)]
+        //    public async Task<IActionResult> RemoveUser(int id)
+        //    {
+        //        var user = await _context.Users.FindAsync(id);
+        //        if (user == null)
+        //        {
+        //            return NotFound();
+        //        }
+
+        //        _context.Users.Remove(user);
+        //        await _context.SaveChangesAsync();
+
+        //        return Ok();
+        //    }
     }
 }

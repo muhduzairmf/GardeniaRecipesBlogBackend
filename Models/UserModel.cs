@@ -1,10 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace GardeniaRecipesBlogBackend.Models
 {
     public class UserModel
     {
-        public int Id { get; set; }
+        public int Id { get; set; } = 0;
 
         [Required]
         [MaxLength(255)]
@@ -25,7 +26,5 @@ namespace GardeniaRecipesBlogBackend.Models
         [Required]
         [MaxLength(255)]
         public string Role { get; set; } = string.Empty;
-
-        public List<RecipeModel> Recipes { get; set; }
     }
 }
